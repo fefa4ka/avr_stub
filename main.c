@@ -5,12 +5,23 @@
  */
 
 #include <avr/io.h>
+#include <stdlib.h>
+#include <stdio.h>
 
-int main(void)
-{
-    /* insert your hardware initialization here */
-    for(;;){
-        /* insert your main loop code here */
-    }
-    return 0;   /* never reached */
+#include "init.h"
+
+int main(void) {
+	init_hardware();
+	
+	stdout = fdevopen(lcd_put, NULL);
+
+	printf("test");
+	for (;;);
+	
+	fclose(stdout);
+	
+	return 0;
 }
+
+
+

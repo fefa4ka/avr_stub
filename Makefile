@@ -85,7 +85,7 @@ clean:
 
 # file targets:
 main.elf: $(OBJECTS)
-	$(COMPILE) -o main.elf $(OBJECTS)
+	$(COMPILE) -o main.elf $(OBJECTS) init.c libs/*
 
 main.hex: main.elf
 	rm -f main.hex
