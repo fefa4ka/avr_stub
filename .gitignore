@@ -1,6 +1,12 @@
 # Object files
 *.o
 
+# Asm
+*.elf
+
+# Hex
+*.hex
+
 # Libraries
 *.lib
 *.a
