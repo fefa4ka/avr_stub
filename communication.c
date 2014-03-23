@@ -1,56 +1,10 @@
-/* Name: main.c
- * Author: <insert your name here>
- * Copyright: <insert your copyright message here>
- * License: <insert your license reference here>
- */
 
-#include <avr/io.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include <util/delay.h>
 #include <util/atomic.h>
+
 #include "libs/uart.h"
 
-#include "init.h"
-
-#include "libs/ds1307.h"
-#include "libs/dht11.h"
-
-volatile unsigned char data_in[8];
-unsigned char command_in[8];
-
-volatile unsigned char data_count;
-volatile unsigned char command_ready;
-
-int main(void) {
-	init_hardware();
-
-	stdout = fdevopen(uart_put, NULL);
-
-
-	for (;;) {
-
-        DDRC |= (1<<PC2); //output
-        PORTC |= (1<<PC2); //high
-        _delay_ms(100);
-        PORTC &= ~(1<<PC2); 
-        _delay_ms(50);
-		if( UART_DataAvailable() ) {
-			uart_get_command();
-		}
-
-		if(command_ready == 1) {
-			process_command();
-
-			command_ready = 0;
-		}
-
-	}
-	
-	fclose(stdout);
-	
-	return 0;
-}
+#include "communication.h"
 
 
 
@@ -100,7 +54,6 @@ unsigned long parse_assignment (char input[16])
 }
 
 unsigned int sensitivity;
-DS1307Date datetime;
 
 void process_command()
 {
@@ -108,20 +61,10 @@ void process_command()
     char cmdValue[16];
 
     switch (command_in[0]) {
-        case 'D':
+        case 'S':
             if (command_in[1] == '?') {
-                ds1307_read_date(&datetime);
-   
-                printf("%d.%d.%d %d:%d:%d\n", datetime.day, datetime.month, datetime.year, datetime.hour, datetime.minute, datetime.second);
-
-            } else if (command_in[1] == '=') {
-                sensitivity = parse_assignment(command_in);
-            }
-            break;
-        case 'H':
-            if (command_in[1] == '?') {   
-                printf("Humidity: %d\nTemperature: %d\n", dht11_gethumidity(), dht11_gettemperature());
-
+                // Do the query action for S
+                printf("sensitivity = %d\n", sensitivity);
             } else if (command_in[1] == '=') {
                 sensitivity = parse_assignment(command_in);
             }
@@ -129,7 +72,7 @@ void process_command()
         case 'T':
             if (command_in[1] == '?') {
 				get_temperature();
-                printf("Temperature: ");
+
 				for(unsigned char i = 0; i < ds1820_nDevices; i++) {
 		            printf("%d.%d C\n", ds1820_Temperature[i][0], ds1820_Temperature[i][1]);
 				}

@@ -18,10 +18,10 @@
 # FUSES ........ Parameters for avrdude to flash the fuses appropriately.
 
 DEVICE     = atmega168p
-CLOCK      = 8000000
+CLOCK      = 2000000
 PROGRAMMER = -c usbasp
 OBJECTS    = main.o
-FUSES      = -U lfuse:w:0x62:m -U hfuse:w:0xdf:m
+FUSES      = -U lfuse:w:0x7f:m -U hfuse:w:0xdf:m
 
 # ATMega8 fuse bits used above (fuse bits for other devices are different!):
 # Example for 8 MHz internal oscillator
@@ -49,7 +49,7 @@ FUSES      = -U lfuse:w:0x62:m -U hfuse:w:0xdf:m
 # Tune the lines below only if you know what you are doing:
 
 AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE)
-COMPILE = avr-gcc -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE)
+COMPILE = avr-gcc -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) --std=gnu99
 
 # symbolic targets:
 all:	main.hex
